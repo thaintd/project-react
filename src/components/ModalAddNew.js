@@ -2,14 +2,27 @@ import React from "react";
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { postUser } from "../service/UserService";
+import { toast } from "react-toastify";
 
 const ModalAddNew = (props) => {
-  const { show, handleClose } = props;
+  const { show, handleClose, handleUpdateTables } = props;
   const [name, setName] = useState("");
   const [job, setJob] = useState("");
-  const handleSave = () => {
-    console.log(name, job);
+  const handleSave = async () => {
+    let res = await postUser(name, job);
+    console.log(res);
+    if (res && res.id) {
+      setName("");
+      setJob("");
+      toast.success("A user is created succeed!");
+      handleClose();
+      props.handleUpdateTables({ first_name: name, id: res.id });
+    } else {
+      toast.error("An error");
+    }
   };
+
   return (
     <div className="modal show">
       <Modal show={show} onHide={handleClose}>
