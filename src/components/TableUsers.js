@@ -4,14 +4,18 @@ import { fetchAllUser } from "../service/UserService";
 import ReactPaginate from "react-paginate";
 import ModalAddNew from "./ModalAddNew";
 import Button from "react-bootstrap/Button";
+import ModelEditUser from "./ModelEditUser";
 
-const TableUsers = (any) => {
+const TableUsers = (props) => {
   const [userList, setUserList] = useState([]);
   const [pageTotal, setPageTotal] = useState(0);
   const [userTotal, setUsertotal] = useState(0);
   const [iShowModelAddNew, setIShowModelAddNew] = useState(false);
+  const [isShowModelEdit, setIsShowModelEdit] = useState(false);
+  const [dataUser, setDataUser] = useState({});
   const handleShow = () => {
     setIShowModelAddNew(false);
+    setIsShowModelEdit(false);
   };
   useEffect(() => {
     getUsers(1);
@@ -32,6 +36,11 @@ const TableUsers = (any) => {
   const handleUpdateTables = (user) => {
     setUserList([user, ...userList]);
   };
+  const handleEditUser = (user) => {
+    setDataUser(user);
+    setIsShowModelEdit(true);
+  };
+  console.log(dataUser);
   return (
     <>
       <div className="my-3 add-new d-flex justify-content-between">
@@ -47,6 +56,7 @@ const TableUsers = (any) => {
             <th>Email</th>
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +69,15 @@ const TableUsers = (any) => {
                   <td>{item.email}</td>
                   <td>{item.first_name}</td>
                   <td>{item.last_name}</td>
+                  <td>
+                    <button
+                      className="btn btn-warning mx-3"
+                      onClick={() => handleEditUser(item)}
+                    >
+                      Edit
+                    </button>
+                    <button className="btn btn-danger">Delete</button>
+                  </td>
                 </tr>
               );
             })}
@@ -88,6 +107,7 @@ const TableUsers = (any) => {
         show={iShowModelAddNew}
         handleClose={handleShow}
       />
+      <ModelEditUser show={isShowModelEdit} user={dataUser} />
     </>
   );
 };
