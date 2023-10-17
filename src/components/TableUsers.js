@@ -5,6 +5,7 @@ import ReactPaginate from "react-paginate";
 import ModalAddNew from "./ModalAddNew";
 import Button from "react-bootstrap/Button";
 import ModelEditUser from "./ModelEditUser";
+import _ from "lodash";
 
 const TableUsers = (props) => {
   const [userList, setUserList] = useState([]);
@@ -13,7 +14,7 @@ const TableUsers = (props) => {
   const [iShowModelAddNew, setIShowModelAddNew] = useState(false);
   const [isShowModelEdit, setIsShowModelEdit] = useState(false);
   const [dataUser, setDataUser] = useState({});
-  const handleShow = () => {
+  const handleClose = () => {
     setIShowModelAddNew(false);
     setIsShowModelEdit(false);
   };
@@ -35,6 +36,12 @@ const TableUsers = (props) => {
   };
   const handleUpdateTables = (user) => {
     setUserList([user, ...userList]);
+  };
+  const handleEditUserFromModal = (user) => {
+    let cloneUserList = _.cloneDeep(userList);
+    let index = userList.findIndex((item) => item.id === user.id);
+    cloneUserList[index].first_name = user.first_name;
+    setUserList(cloneUserList);
   };
   const handleEditUser = (user) => {
     setDataUser(user);
@@ -105,9 +112,14 @@ const TableUsers = (props) => {
       <ModalAddNew
         handleUpdateTables={handleUpdateTables}
         show={iShowModelAddNew}
-        handleClose={handleShow}
+        handleClose={handleClose}
       />
-      <ModelEditUser show={isShowModelEdit} user={dataUser} />
+      <ModelEditUser
+        show={isShowModelEdit}
+        handleClose={handleClose}
+        user={dataUser}
+        handleEditUserFromModal={handleEditUserFromModal}
+      />
     </>
   );
 };
