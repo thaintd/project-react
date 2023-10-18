@@ -7,7 +7,7 @@ import Button from "react-bootstrap/Button";
 import ModelEditUser from "./ModelEditUser";
 import ModalConfirm from "./ModalConfirm";
 import "./Table.scss";
-
+import { debounce } from "lodash";
 import _ from "lodash";
 
 const TableUsers = (props) => {
@@ -27,9 +27,13 @@ const TableUsers = (props) => {
   const handSort = (sortBy, sortField) => {
     setSortBy(sortBy);
     setSortField(sortField);
-    const first5Users = userList.slice(0, 6);
-    const sortedList = _.sortBy(first5Users, [sortField], [sortBy]);
-    setUserList([...sortedList, ...userList.slice(6)]);
+
+    let cloneUserList = _.cloneDeep(userList);
+    if (sortField === "id" || sortField === "first_name") {
+      cloneUserList = _.orderBy(cloneUserList, [sortField], [sortBy]);
+    }
+
+    setUserList(cloneUserList);
   };
 
   const handleClose = () => {
@@ -43,8 +47,7 @@ const TableUsers = (props) => {
   const getUsers = async (page) => {
     const res = await fetchAllUser(page);
     if (res && res.data) {
-      const firstFiveUsers = res.data.slice(0, 5); // Lấy 5 phần tử đầu tiên
-      setUserList(firstFiveUsers);
+      setUserList(res.data);
       setPageTotal(res.total_pages);
       setUsertotal(res.total);
     }
@@ -76,6 +79,16 @@ const TableUsers = (props) => {
     setIsShowModalDelete(true);
     setUserDelete(user);
   };
+  const handleSearch = debounce((event) => {
+    let term = event.target.value;
+    if (term) {
+      let cloneUserList = _.cloneDeep(userList);
+      cloneUserList = cloneUserList.filter((item) => item.email.includes(term));
+      setUserList(cloneUserList);
+    } else {
+      getUsers(1);
+    }
+  }, 300);
   return (
     <>
       <div className="my-3 add-new d-flex justify-content-between">
@@ -83,6 +96,15 @@ const TableUsers = (props) => {
         <Button variant="success" onClick={() => setIShowModelAddNew(true)}>
           ADD NEW
         </Button>{" "}
+      </div>
+      <div className="search my-3 col-3">
+        <input
+          className="form-control"
+          placeholder="search here"
+          onChange={(event) => {
+            handleSearch(event);
+          }}
+        />
       </div>
       <Table striped bordered hover>
         <thead>
@@ -92,12 +114,12 @@ const TableUsers = (props) => {
                 <span>Id</span>
                 <span>
                   <i
-                    onClick={() => handSort("desc", "id")}
-                    className="fa-solid fa-arrow-down"
-                  ></i>
-                  <i
                     onClick={() => handSort("asc", "id")}
                     className="fa-solid fa-arrow-up"
+                  ></i>
+                  <i
+                    onClick={() => handSort("desc", "id")}
+                    className="fa-solid fa-arrow-down"
                   ></i>
                 </span>
               </div>
@@ -108,12 +130,12 @@ const TableUsers = (props) => {
                 <span>First Name</span>
                 <span>
                   <i
-                    onClick={() => handSort("desc", "first_name")}
-                    className="fa-solid fa-arrow-down"
-                  ></i>
-                  <i
                     onClick={() => handSort("asc", "first_name")}
                     className="fa-solid fa-arrow-up"
+                  ></i>
+                  <i
+                    onClick={() => handSort("desc", "first_name")}
+                    className="fa-solid fa-arrow-down"
                   ></i>
                 </span>
               </div>
