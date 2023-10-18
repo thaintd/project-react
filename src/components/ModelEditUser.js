@@ -20,7 +20,6 @@ const ModelEditUser = (props) => {
       handleClose();
       toast.success("update user succeed");
     }
-    console.log(res);
   };
   useEffect(() => {
     if (show) {

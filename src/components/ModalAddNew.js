@@ -11,7 +11,6 @@ const ModalAddNew = (props) => {
   const [job, setJob] = useState("");
   const handleSave = async () => {
     let res = await postUser(name, job);
-    console.log(res);
     if (res && res.id) {
       setName("");
       setJob("");

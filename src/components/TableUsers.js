@@ -6,12 +6,16 @@ import ModalAddNew from "./ModalAddNew";
 import Button from "react-bootstrap/Button";
 import ModelEditUser from "./ModelEditUser";
 import ModalConfirm from "./ModalConfirm";
+import "./Table.scss";
+
 import _ from "lodash";
 
 const TableUsers = (props) => {
   const [userList, setUserList] = useState([]);
   const [pageTotal, setPageTotal] = useState(0);
   const [userTotal, setUsertotal] = useState(0);
+  const [sortBy, setSortBy] = useState("asc");
+  const [sortField, setSortField] = useState("id");
 
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const [iShowModelAddNew, setIShowModelAddNew] = useState(false);
@@ -19,6 +23,15 @@ const TableUsers = (props) => {
 
   const [dataUser, setDataUser] = useState({});
   const [userDelete, setUserDelete] = useState({});
+
+  const handSort = (sortBy, sortField) => {
+    setSortBy(sortBy);
+    setSortField(sortField);
+    const first5Users = userList.slice(0, 6);
+    const sortedList = _.sortBy(first5Users, [sortField], [sortBy]);
+    setUserList([...sortedList, ...userList.slice(6)]);
+  };
+
   const handleClose = () => {
     setIShowModelAddNew(false);
     setIsShowModelEdit(false);
@@ -30,13 +43,13 @@ const TableUsers = (props) => {
   const getUsers = async (page) => {
     const res = await fetchAllUser(page);
     if (res && res.data) {
-      setUserList(res.data);
+      const firstFiveUsers = res.data.slice(0, 5); // Lấy 5 phần tử đầu tiên
+      setUserList(firstFiveUsers);
       setPageTotal(res.total_pages);
       setUsertotal(res.total);
-      console.log(res);
     }
   };
-  console.log(userList);
+
   const handlePageClick = (event) => {
     getUsers(event.selected + 1);
   };
@@ -63,8 +76,6 @@ const TableUsers = (props) => {
     setIsShowModalDelete(true);
     setUserDelete(user);
   };
-
-  console.log(dataUser);
   return (
     <>
       <div className="my-3 add-new d-flex justify-content-between">
@@ -76,9 +87,37 @@ const TableUsers = (props) => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>
+              <div className="header">
+                <span>Id</span>
+                <span>
+                  <i
+                    onClick={() => handSort("desc", "id")}
+                    className="fa-solid fa-arrow-down"
+                  ></i>
+                  <i
+                    onClick={() => handSort("asc", "id")}
+                    className="fa-solid fa-arrow-up"
+                  ></i>
+                </span>
+              </div>
+            </th>
             <th>Email</th>
-            <th>First Name</th>
+            <th>
+              <div className="header">
+                <span>First Name</span>
+                <span>
+                  <i
+                    onClick={() => handSort("desc", "first_name")}
+                    className="fa-solid fa-arrow-down"
+                  ></i>
+                  <i
+                    onClick={() => handSort("asc", "first_name")}
+                    className="fa-solid fa-arrow-up"
+                  ></i>
+                </span>
+              </div>
+            </th>
             <th>Last Name</th>
             <th>Action</th>
           </tr>
