@@ -5,18 +5,24 @@ import ReactPaginate from "react-paginate";
 import ModalAddNew from "./ModalAddNew";
 import Button from "react-bootstrap/Button";
 import ModelEditUser from "./ModelEditUser";
+import ModalConfirm from "./ModalConfirm";
 import _ from "lodash";
 
 const TableUsers = (props) => {
   const [userList, setUserList] = useState([]);
   const [pageTotal, setPageTotal] = useState(0);
   const [userTotal, setUsertotal] = useState(0);
+
+  const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const [iShowModelAddNew, setIShowModelAddNew] = useState(false);
   const [isShowModelEdit, setIsShowModelEdit] = useState(false);
+
   const [dataUser, setDataUser] = useState({});
+  const [userDelete, setUserDelete] = useState({});
   const handleClose = () => {
     setIShowModelAddNew(false);
     setIsShowModelEdit(false);
+    setIsShowModalDelete(false);
   };
   useEffect(() => {
     getUsers(1);
@@ -43,10 +49,21 @@ const TableUsers = (props) => {
     cloneUserList[index].first_name = user.first_name;
     setUserList(cloneUserList);
   };
+  const handleDeleteUserFromModal = (user) => {
+    let cloneUserList = _.cloneDeep(userList);
+    cloneUserList = cloneUserList.filter((item) => item.id !== user.id);
+    setUserList(cloneUserList);
+  };
   const handleEditUser = (user) => {
     setDataUser(user);
     setIsShowModelEdit(true);
   };
+
+  const handleDeleteUser = (user) => {
+    setIsShowModalDelete(true);
+    setUserDelete(user);
+  };
+
   console.log(dataUser);
   return (
     <>
@@ -83,7 +100,14 @@ const TableUsers = (props) => {
                     >
                       Edit
                     </button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => {
+                        handleDeleteUser(item);
+                      }}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               );
@@ -119,6 +143,12 @@ const TableUsers = (props) => {
         handleClose={handleClose}
         user={dataUser}
         handleEditUserFromModal={handleEditUserFromModal}
+      />
+      <ModalConfirm
+        show={isShowModalDelete}
+        handleClose={handleClose}
+        user={userDelete}
+        handleDeleteUserFromModal={handleDeleteUserFromModal}
       />
     </>
   );
