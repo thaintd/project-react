@@ -11,3 +11,55 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.login-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  margin-top: 30px;
+  .title {
+    margin: 5px 0;
+    font-size: 23px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  input {
+    margin: 5px 0;
+    background-color: rgb(246, 243, 243);
+  }
+  .input-2 {
+    position: relative;
+    input {
+      width: 100%;
+    }
+    i {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+    }
+  }
+  .text {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  button {
+    background-color: rgb(240, 74, 74);
+    color: #fff;
+  }
+  input,
+  button {
+    border-radius: 5px;
+    padding: 10px 5px;
+    border-style: none;
+  }
+  button[disabled="disabled"],
+  button:disabled {
+    cursor: not-allowed;
+  }
+  .back {
+    margin-top: 10px;
+    text-align: center;
+    cursor: pointer;
+  }
+}
